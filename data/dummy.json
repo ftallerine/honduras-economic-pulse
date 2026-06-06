@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "approved": "2026-06-06",
+    "approvedBy": "Frankie",
+    "phase": 1,
+    "currency": "HNL",
+    "usdRate": 24.7
+  },
+  "chapter1": {
+    "gdpUSD": 31800000000,
+    "gdpPerCapitaUSD": 3050,
+    "gdpGrowthPct": 3.6,
+    "inflationPct": 5.2,
+    "exchangeRateHNLperUSD": 24.7,
+    "debtPctGDP": 47,
+    "remittancesPctGDP": 26,
+    "tradeBalanceUSD": -4100000000
+  },
+  "chapter2": {
+    "gdpBySector": {
+      "agriculture": 12,
+      "industry": 26,
+      "services": 62
+    },
+    "topExports": ["Coffee", "Bananas", "Textiles", "Palm oil", "Shrimp"],
+    "fdiUSD": 1200000000
+  },
+  "chapter3": {
+    "avgMonthlySalaryHNL": 8500,
+    "minimumWageHNL": 6200,
+    "unemploymentPct": 5.8,
+    "underemploymentPct": 53,
+    "formalEconomyPct": 43,
+    "informalEconomyPct": 57
+  },
+  "chapter4": {
+    "foodBasket": {
+      "cornPerLb": 12,
+      "beansPerLb": 18,
+      "ricePerLb": 14,
+      "oilPerLiter": 55,
+      "eggsPerDozen": 65
+    },
+    "monthlyBasketTotalHNL": 3200,
+    "salaryToBasketRatio": 2.66
+  },
+  "chapter5": {
+    "povertyRatePct": 59,
+    "extremePovertyPct": 28,
+    "cleanWaterAccessPct": 87,
+    "electricityAccessPct": 91,
+    "literacyRatePct": 88,
+    "childMalnutritionPct": 23
+  }
+}

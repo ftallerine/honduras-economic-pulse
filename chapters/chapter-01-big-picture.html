@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 01 — The Big Picture | Honduras Economic Pulse</title>
+  <style>
+    /* Design tokens — keep in sync with shared/design-tokens.md */
+    :root {
+      --bg: #0f1117; --card-bg: #1a1d27; --border: #2a2d3a;
+      --accent: #4f9cf9; --positive: #34d399; --negative: #f87171;
+      --neutral: #94a3b8; --text-primary: #f1f5f9; --text-secondary: #94a3b8;
+      --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text-primary); font-family: var(--font-stack); padding: 2rem 1rem; }
+    .back { color: var(--accent); text-decoration: none; font-size: 0.85rem; display: inline-block; margin-bottom: 1.5rem; }
+    h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem; }
+    .placeholder { background: var(--card-bg); border: 1px dashed var(--border); border-radius: 0.75rem; padding: 3rem 2rem; text-align: center; color: var(--text-secondary); }
+    .placeholder strong { display: block; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+  <a href="../index.html" class="back">← Back to all chapters</a>
+  <h1>🌎 The Big Picture</h1>
+  <p class="subtitle">Chapter 01 — GDP, remittances, inflation, and trade balance</p>
+
+  <div class="placeholder">
+    <strong>Coming in Sprint 1</strong>
+    KPI cards and charts will be built here.<br>
+    Flagship metrics: GDP $31.8B · Remittances 26% of GDP · Inflation 5.2%
+  </div>
+
+  <script>
+    // Data will be loaded from ../data/dummy.json via fetch()
+    // Chapter 1 keys: gdpUSD, gdpPerCapitaUSD, gdpGrowthPct, inflationPct,
+    //                 exchangeRateHNLperUSD, debtPctGDP, remittancesPctGDP, tradeBalanceUSD
+  </script>
+</body>
+</html>
