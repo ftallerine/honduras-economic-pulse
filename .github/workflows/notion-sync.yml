@@ -1,0 +1,89 @@
+name: Sync commits to Notion
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  notion-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse PULSE IDs from commits and update Notion
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+          COMMIT_SHA: ${{ github.sha }}
+          COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          # Extract all PULSE-### IDs from the commit message
+          PULSE_IDS=$(echo "$COMMIT_MSG" | grep -oE 'PULSE-[0-9]+' | sort -u)
+
+          if [ -z "$PULSE_IDS" ]; then
+            echo "No PULSE IDs found in commit message. Skipping."
+            exit 0
+          fi
+
+          echo "Found PULSE IDs: $PULSE_IDS"
+
+          for PULSE_ID in $PULSE_IDS; do
+            # Extract the numeric part
+            NUM=$(echo "$PULSE_ID" | grep -oE '[0-9]+')
+
+            echo "Looking up $PULSE_ID (number: $NUM) in Notion..."
+
+            # Query the database for the page with this unique_id number
+            RESPONSE=$(curl -s -X POST "https://api.notion.com/v1/databases/$NOTION_DB_ID/query" \
+              -H "Authorization: Bearer $NOTION_TOKEN" \
+              -H "Notion-Version: 2022-06-28" \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"filter\": {
+                  \"property\": \"ID\",
+                  \"unique_id\": {
+                    \"equals\": $NUM
+                  }
+                }
+              }")
+
+            PAGE_ID=$(echo "$RESPONSE" | python3 -c "import sys,json; r=json.load(sys.stdin)['results']; print(r[0]['id'] if r else '')" 2>/dev/null)
+
+            if [ -z "$PAGE_ID" ]; then
+              echo "No Notion page found for $PULSE_ID. Skipping."
+              continue
+            fi
+
+            echo "Found page $PAGE_ID for $PULSE_ID — appending commit link..."
+
+            SHORT_SHA="${COMMIT_SHA:0:7}"
+            ENTRY="[$SHORT_SHA]($COMMIT_URL) — ${COMMIT_MSG%%$'\n'*}"
+
+            # Append commit link to GitHub Commits field
+            curl -s -X PATCH "https://api.notion.com/v1/pages/$PAGE_ID" \
+              -H "Authorization: Bearer $NOTION_TOKEN" \
+              -H "Notion-Version: 2022-06-28" \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"properties\": {
+                  \"GitHub Commits\": {
+                    \"rich_text\": [
+                      {
+                        \"type\": \"text\",
+                        \"text\": {
+                          \"content\": \"$SHORT_SHA\",
+                          \"link\": { \"url\": \"$COMMIT_URL\" }
+                        }
+                      },
+                      {
+                        \"type\": \"text\",
+                        \"text\": { \"content\": \" — ${COMMIT_MSG%%$'\n'*}\" }
+                      }
+                    ]
+                  }
+                }
+              }" > /dev/null
+
+            echo "✓ $PULSE_ID updated with commit $SHORT_SHA"
+          done
