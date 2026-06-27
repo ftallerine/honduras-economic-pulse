@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chapter 02 — What Honduras Runs On | Honduras Economic Pulse</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
   <style>
     :root {
       --bg: #0f1117; --card-bg: #1a1d27; --border: #2a2d3a;
@@ -12,28 +13,171 @@
       --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text-primary); font-family: var(--font-stack); padding: 2rem 1rem; }
+    body {
+      background: var(--bg); color: var(--text-primary);
+      font-family: var(--font-stack); padding: 2rem 1rem;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .container { width: 100%; max-width: 720px; }
     .back { color: var(--accent); text-decoration: none; font-size: 0.85rem; display: inline-block; margin-bottom: 1.5rem; }
+    .back:hover { text-decoration: underline; }
     h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem; }
     .subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem; }
-    .placeholder { background: var(--card-bg); border: 1px dashed var(--border); border-radius: 0.75rem; padding: 3rem 2rem; text-align: center; color: var(--text-secondary); }
-    .placeholder strong { display: block; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.5rem; }
+
+    .section-title {
+      font-size: 0.8rem; font-weight: 600; margin: 2.5rem 0 1rem;
+      color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+    .kpi-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 0.75rem; padding: 1.25rem;
+    }
+    .kpi-card .label {
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-secondary); margin-bottom: 0.4rem;
+    }
+    .kpi-card .value { font-size: 1.75rem; font-weight: 700; line-height: 1.1; }
+    .kpi-card .sub { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem; }
+
+    .chart-wrap {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 0.75rem; padding: 1.5rem;
+      max-width: 600px; margin: 0 auto;
+    }
+    .chart-wrap canvas { width: 100% !important; }
+
+    .charts-row { display: flex; flex-direction: column; gap: 1rem; }
+
+    .ai-insight {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 0.75rem; padding: 1.25rem 1.5rem; margin-top: 2.5rem;
+    }
+    .ai-insight .ai-label {
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--accent); margin-bottom: 0.5rem; font-weight: 600;
+    }
+    .ai-insight p {
+      font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; font-style: italic;
+    }
+
+    footer {
+      margin-top: 3rem; font-size: 0.7rem; color: var(--text-secondary);
+      text-align: center; padding-top: 1.5rem; border-top: 1px solid var(--border); width: 100%;
+    }
   </style>
 </head>
 <body>
-  <a href="../index.html" class="back">← Back to all chapters</a>
-  <h1>🏭 What Honduras Runs On</h1>
-  <p class="subtitle">Chapter 02 — GDP by sector, top exports, and foreign investment</p>
+  <div class="container">
+    <a href="../index.html" class="back">&larr; Back to all chapters</a>
+    <h1>&#127981; What Honduras Runs On</h1>
+    <p class="subtitle">Chapter 02 — GDP by sector, top exports, and foreign investment</p>
 
-  <div class="placeholder">
-    <strong>Coming Soon</strong>
-    GDP sector breakdown chart and export highlights will be built here.<br>
-    Flagship: Services 62% · Industry 26% · Agriculture 12%
+    <div class="section-title">GDP by Sector</div>
+    <div class="kpi-grid" id="kpi-grid"></div>
+
+    <div class="section-title">Sector Breakdown &amp; Top Exports</div>
+    <div class="charts-row">
+      <div class="chart-wrap">
+        <canvas id="sector-chart"></canvas>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="exports-chart"></canvas>
+      </div>
+    </div>
+
+    <div class="ai-insight">
+      <div class="ai-label">AI Insight — Phase 4</div>
+      <p>Services dominate at 62% of GDP, but Honduras's export identity still leans heavily on agriculture — coffee alone is the top earner. Industry at 26% reflects the maquila (textile assembly) sector, which employs hundreds of thousands but adds limited value domestically. FDI at $1.2B is healthy for the region, though concentrated in energy and telecom rather than diversifying the productive base.</p>
+    </div>
+
+    <footer>Dummy data — Phase 1 POC</footer>
   </div>
 
   <script>
-    // Data from ../data/dummy.json → chapter2
-    // Keys: gdpBySector, topExports, fdiUSD
+    document.addEventListener('DOMContentLoaded', async () => {
+      const res = await fetch('../data/dummy.json');
+      const data = await res.json();
+      const ch = data.chapter2;
+
+      const sectors = ch.gdpBySector;
+      const kpis = [
+        { label: 'Agriculture', value: sectors.agriculture + '%', color: '#34d399' },
+        { label: 'Industry',    value: sectors.industry + '%',    color: '#4f9cf9' },
+        { label: 'Services',    value: sectors.services + '%',    color: '#a78bfa' },
+        { label: 'FDI Inflows', value: '$' + (ch.fdiUSD / 1e9).toFixed(1) + 'B', color: 'var(--text-primary)', sub: 'foreign direct investment' },
+      ];
+
+      const grid = document.getElementById('kpi-grid');
+      kpis.forEach(k => {
+        const card = document.createElement('div');
+        card.className = 'kpi-card';
+        card.innerHTML = `
+          <div class="label">${k.label}</div>
+          <div class="value" style="color:${k.color}">${k.value}</div>
+          ${k.sub ? `<div class="sub">${k.sub}</div>` : ''}
+        `;
+        grid.appendChild(card);
+      });
+
+      // Doughnut — GDP by sector
+      new Chart(document.getElementById('sector-chart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Agriculture', 'Industry', 'Services'],
+          datasets: [{
+            data: [sectors.agriculture, sectors.industry, sectors.services],
+            backgroundColor: ['#34d399', '#4f9cf9', '#a78bfa'],
+            borderColor: '#1a1d27',
+            borderWidth: 3,
+          }]
+        },
+        options: {
+          responsive: true,
+          cutout: '55%',
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 12, padding: 16 } },
+            tooltip: { callbacks: { label: c => c.label + ': ' + c.raw + '%' } }
+          }
+        }
+      });
+
+      // Horizontal bar — top exports
+      new Chart(document.getElementById('exports-chart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ch.topExports,
+          datasets: [{
+            label: 'Export Rank',
+            data: ch.topExports.map((_, i) => ch.topExports.length - i),
+            backgroundColor: ['#4f9cf9', '#34d399', '#a78bfa', '#f59e0b', '#f87171'],
+            borderRadius: 4,
+            barThickness: 24,
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: c => '#' + (ch.topExports.length - c.raw + 1) + ' export' } }
+          },
+          scales: {
+            x: { display: false },
+            y: {
+              grid: { display: false },
+              ticks: { color: '#f1f5f9', font: { size: 12 } }
+            }
+          }
+        }
+      });
+    });
   </script>
 </body>
 </html>

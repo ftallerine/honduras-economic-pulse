@@ -12,29 +12,191 @@
       --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text-primary); font-family: var(--font-stack); padding: 2rem 1rem; }
+    body {
+      background: var(--bg); color: var(--text-primary);
+      font-family: var(--font-stack); padding: 2rem 1rem;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .container { width: 100%; max-width: 720px; }
     .back { color: var(--accent); text-decoration: none; font-size: 0.85rem; display: inline-block; margin-bottom: 1.5rem; }
+    .back:hover { text-decoration: underline; }
     h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem; }
     .subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem; }
-    .placeholder { background: var(--card-bg); border: 1px dashed var(--border); border-radius: 0.75rem; padding: 3rem 2rem; text-align: center; color: var(--text-secondary); }
-    .placeholder strong { display: block; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.5rem; }
+
+    .section-title {
+      font-size: 0.8rem; font-weight: 600; margin: 2.5rem 0 1rem;
+      color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.06em;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+    .kpi-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 0.75rem; padding: 1.25rem;
+    }
+    .kpi-card .label {
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-secondary); margin-bottom: 0.4rem;
+    }
+    .kpi-card .value { font-size: 1.75rem; font-weight: 700; line-height: 1.1; }
+    .kpi-card .sub { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem; }
+
+    .basket-table-wrap {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 0.75rem; overflow: hidden;
+    }
+    table {
+      width: 100%; border-collapse: collapse;
+    }
+    thead th {
+      text-align: left; padding: 0.75rem 1.25rem;
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-secondary); border-bottom: 1px solid var(--border);
+      font-weight: 600;
+    }
+    thead th:last-child { text-align: right; }
+    tbody td {
+      padding: 0.75rem 1.25rem; font-size: 0.9rem;
+      border-bottom: 1px solid var(--border);
+    }
+    tbody td:last-child { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: rgba(79, 156, 249, 0.04); }
+    tfoot td {
+      padding: 0.85rem 1.25rem; font-weight: 700; font-size: 0.95rem;
+      border-top: 2px solid var(--accent);
+    }
+    tfoot td:last-child { text-align: right; color: var(--accent); }
+
+    .gauge-wrap {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 0.75rem; padding: 1.5rem; margin-top: 1rem;
+    }
+    .gauge-label {
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-secondary); margin-bottom: 0.75rem; font-weight: 600;
+    }
+    .gauge-track {
+      background: var(--border); border-radius: 999px; height: 28px;
+      position: relative; overflow: hidden;
+    }
+    .gauge-fill {
+      height: 100%; border-radius: 999px;
+      background: linear-gradient(90deg, var(--positive), var(--accent));
+      display: flex; align-items: center; justify-content: flex-end; padding-right: 0.75rem;
+      font-size: 0.8rem; font-weight: 700; color: var(--bg);
+      transition: width 0.6s ease;
+    }
+    .gauge-markers {
+      display: flex; justify-content: space-between; margin-top: 0.4rem;
+      font-size: 0.65rem; color: var(--text-secondary);
+    }
+
+    .ai-insight {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 0.75rem; padding: 1.25rem 1.5rem; margin-top: 2.5rem;
+    }
+    .ai-insight .ai-label {
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--accent); margin-bottom: 0.5rem; font-weight: 600;
+    }
+    .ai-insight p {
+      font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; font-style: italic;
+    }
+
+    footer {
+      margin-top: 3rem; font-size: 0.7rem; color: var(--text-secondary);
+      text-align: center; padding-top: 1.5rem; border-top: 1px solid var(--border); width: 100%;
+    }
   </style>
 </head>
 <body>
-  <a href="../index.html" class="back">← Back to all chapters</a>
-  <h1>🛒 The Table</h1>
-  <p class="subtitle">Chapter 04 — Food basket prices vs. what a salary can actually buy</p>
+  <div class="container">
+    <a href="../index.html" class="back">&larr; Back to all chapters</a>
+    <h1>&#128722; The Table</h1>
+    <p class="subtitle">Chapter 04 — Food basket prices vs. what a salary can actually buy</p>
 
-  <div class="placeholder">
-    <strong>Sprint 1 Flagship — Coming Next</strong>
-    Food basket itemized table and salary-to-basket ratio will be built here.<br>
-    Flagship: Basket L.3,200/mo · Ratio 2.66x · Corn L.12/lb · Beans L.18/lb
+    <div class="section-title">Monthly Snapshot</div>
+    <div class="kpi-grid" id="kpi-grid"></div>
+
+    <div class="section-title">Basic Food Basket</div>
+    <div class="basket-table-wrap">
+      <table>
+        <thead><tr><th>Item</th><th>Unit</th><th>Price (HNL)</th></tr></thead>
+        <tbody id="basket-body"></tbody>
+        <tfoot id="basket-foot"></tfoot>
+      </table>
+    </div>
+
+    <div class="gauge-wrap" id="gauge-wrap">
+      <div class="gauge-label">Salary-to-Basket Ratio</div>
+      <div class="gauge-track">
+        <div class="gauge-fill" id="gauge-fill"></div>
+      </div>
+      <div class="gauge-markers">
+        <span>0x</span><span>1x (break even)</span><span>2x</span><span>3x</span><span>4x</span>
+      </div>
+    </div>
+
+    <div class="ai-insight">
+      <div class="ai-label">AI Insight — Phase 4</div>
+      <p>At 2.66x, the average salary covers the basic food basket almost three times over — but that headline masks the reality for minimum-wage earners (ratio drops to ~1.94x) and informal workers who often earn less. The basket itself is minimal: corn, beans, rice, oil, and eggs. Add rent, transport, and school fees and the margin vanishes for most households.</p>
+    </div>
+
+    <footer>Dummy data — Phase 1 POC</footer>
   </div>
 
   <script>
-    // Data from ../data/dummy.json → chapter4
-    // Keys: foodBasket (cornPerLb, beansPerLb, ricePerLb, oilPerLiter, eggsPerDozen),
-    //       monthlyBasketTotalHNL, salaryToBasketRatio
+    document.addEventListener('DOMContentLoaded', async () => {
+      const res = await fetch('../data/dummy.json');
+      const data = await res.json();
+      const ch = data.chapter4;
+
+      const kpis = [
+        { label: 'Monthly Basket', value: 'L.' + ch.monthlyBasketTotalHNL.toLocaleString(), color: 'var(--text-primary)', sub: 'basic food cost' },
+        { label: 'Salary-to-Basket', value: ch.salaryToBasketRatio + 'x', color: 'var(--positive)', sub: 'avg salary covers basket' },
+      ];
+
+      const grid = document.getElementById('kpi-grid');
+      kpis.forEach(k => {
+        const card = document.createElement('div');
+        card.className = 'kpi-card';
+        card.innerHTML = `
+          <div class="label">${k.label}</div>
+          <div class="value" style="color:${k.color}">${k.value}</div>
+          ${k.sub ? `<div class="sub">${k.sub}</div>` : ''}
+        `;
+        grid.appendChild(card);
+      });
+
+      const items = [
+        { name: 'Corn',  unit: 'per lb',    price: ch.foodBasket.cornPerLb },
+        { name: 'Beans', unit: 'per lb',    price: ch.foodBasket.beansPerLb },
+        { name: 'Rice',  unit: 'per lb',    price: ch.foodBasket.ricePerLb },
+        { name: 'Oil',   unit: 'per liter', price: ch.foodBasket.oilPerLiter },
+        { name: 'Eggs',  unit: 'per dozen', price: ch.foodBasket.eggsPerDozen },
+      ];
+
+      const tbody = document.getElementById('basket-body');
+      items.forEach(it => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${it.name}</td><td>${it.unit}</td><td>L.${it.price}</td>`;
+        tbody.appendChild(tr);
+      });
+
+      const tfoot = document.getElementById('basket-foot');
+      tfoot.innerHTML = `<tr><td colspan="2">Monthly Total</td><td>L.${ch.monthlyBasketTotalHNL.toLocaleString()}</td></tr>`;
+
+      // Gauge: ratio on a 0–4x scale
+      const pct = Math.min((ch.salaryToBasketRatio / 4) * 100, 100);
+      const fill = document.getElementById('gauge-fill');
+      fill.style.width = pct + '%';
+      fill.textContent = ch.salaryToBasketRatio + 'x';
+    });
   </script>
 </body>
 </html>

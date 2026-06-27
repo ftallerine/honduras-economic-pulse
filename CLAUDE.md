@@ -42,6 +42,12 @@ Sprint 1 (Jun 6–12): chapter-04, chapter-01, dummy dataset
 Each chapter has a static placeholder insight blurb in Phase 1.
 Real Claude API integration is Phase 4 only — do not wire up API calls now.
 
+## Git workflow
+- Remote: `ftallerine/honduras-economic-pulse` on GitHub
+- Branch: `master` is the main branch — no force-pushes
+- Commit messages: include `PULSE-###` for work tied to a sprint board story (triggers Notion sync via GitHub Action)
+- PRs merged to `master` with `PULSE-###` in title or body auto-close the Notion story to "Done"
+
 ## What NOT to do
 - Do not install npm packages
 - Do not create a build system or bundler
